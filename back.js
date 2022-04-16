@@ -1,11 +1,15 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-class square
+class shape
 {
-    constructor(center,size)
+    constructor(center,size,size2)
     {
         this.center=center
-        this.angles=[0,90,180,270]
+        this.angles=[]
+        for (let i = 0; i < size2; i++) 
+        {
+            this.angles.push(i*360/size2);
+        }
         this.size=size
     }
     draw()
@@ -43,7 +47,10 @@ class square
 }
 
 var sq=[]
-sq.push(new square([100,100],30))
+sq.push(new shape([100,0],40,4))
+sq.push(new shape([200,0],40,3))
+sq.push(new shape([300,0],40,5))
+sq.push(new shape([400,0],40,6))
 function background()
 {
     sq.forEach(square => {
