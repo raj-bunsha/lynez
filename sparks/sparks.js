@@ -86,35 +86,49 @@ class Spark
         }
     }
 }
-var sparks=[]
+class Sparker
+{
+    constructor(POSX,POSY)
+    {
+        this.sparks=[]
+        this.POSX=POSX
+        this.POSY=POSY
+    }
+    draw2()
+    {
+        var POSX=this.POSX
+        var POSY=this.POSY
+        this.sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*2+2,"#000",1))
+        this.sparks.sort()
+        this.sparks.reverse()
+        // console.log(POSX,POSY);
+        for (let i = 0; i < this.sparks.length; i++) {
+            this.sparks[i].move(1)
+            this.sparks[i].draw()
+            if (!this.sparks[i].alive)
+            {
+                // sparks.pop(i)
+                // sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*3+3,"#000",1))
+            }
+        }
+        if(this.sparks.length>10)
+        {
+            this.sparks=this.sparks.slice(5,)
+        }
+}
+}
 // for (let i = 0; i < 50;i++) {
 //     sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*3+3,"#000",2))
 // }
+sparks=new Sparker(100,100)
+sparks2=new Sparker(500,500)
 function animate()
 {
     ctx.clearRect(0,0,canvas.width,canvas.height)
     requestAnimationFrame(animate);
-    sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*2+2,"#000",1))
-    sparks.sort()
-    sparks.reverse()
-    console.log(sparks.length);
-    for (let i = 0; i < sparks.length; i++) {
-        sparks[i].move(1)
-            
-        sparks[i].draw()
-        if (!sparks[i].alive)
-        {
-            // sparks.pop(i)
-            // sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*3+3,"#000",1))
-        }
-    }
-    if(sparks.length>500)
-    {
-        sparks=sparks.slice(250,)
-    }
+    sparks.draw2()
+    sparks2.draw2()
 }
-var POSX=100;
-var POSY=100;
 // canvas.addEventListener("mousemove", function (e) {
 //     var a = getMousePosition(canvas, e);
       
