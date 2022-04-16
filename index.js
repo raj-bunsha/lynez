@@ -21,8 +21,9 @@ class Ball{
     move()
     {
         this.position.y += this.vel.y
+        this.position.x += this.vel.x
         this.vel.y+=0.1
-        this.collide()
+        // this.collide()
     }
     animate()
     {
@@ -34,6 +35,7 @@ class Ball{
         {
             this.vel.y-=0.1;
             this.vel.y*=-1;
+            console.log(this.vel);
             // console.log(this.vel.y);
         }
     }
@@ -41,7 +43,7 @@ class Ball{
 ball = new Ball()
 class LineS {
     constructor() {
-        this.points=[{x:0,y:canvas.height},{x:canvas.width,y:canvas.height}]
+        this.points=[{x:0,y:canvas.height+10},{x:canvas.width,y:canvas.height-20}]
         this.currentPoint={x:canvas.width/2,y:canvas.height}
         this.lines=[[this.points[0],this.points[1]]]
     }
@@ -82,15 +84,19 @@ class LineS {
             var d=Math.abs((pos2.x-pos1.x)*(pos1.y-posball.y)-(pos2.y-pos1.y)*(pos1.x-posball.x));
             d=d/Math.sqrt(den);
             // console.log(d);
-            if(d<=20)
+            if(d<20)
             {
                 if(ball.vel.y>0)
                 {
-                    ball.vel.y=-10 ;
-                    // var m=(pos2.y-pos1.y)/(pos2.x-pos1.x);
+                    ball.vel.y=-1;
+                    var m=(pos2.y-pos1.y)/(pos2.x-pos1.x);
+                    ball.vel.x=m;
                     // var n={x:m,y:-1}
                     // n=this.unit(n)
                     // ball.vel=this.sub(ball.vel,this.mult(2*this.dot(ball.vel,n),n))
+                    ball.vel=this.unit(ball.vel);
+                    ball.vel=this.mult(9,ball.vel)
+                    console.log(ball.vel)
                 }
 
             }
@@ -99,7 +105,7 @@ class LineS {
     unit(n)
     {
         var mag=(n.x*n.x+n.y*n.y);
-        return this.mult(n,1/mag);
+        return this.mult(1/mag,n);
     }
     mult(a,b)
     {
