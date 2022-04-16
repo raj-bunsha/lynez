@@ -194,7 +194,8 @@ function chooseRandomShapes() {
         sq.push(new shape([Math.random() * canvas.width, -Math.floor(Math.random() * 2 * canvas.height / 3)], 40, listShapesSize[Math.floor(Math.random() * 4)]));
     }
 }
-setInterval(chooseRandomShapes, 1000);
+chooseRandomShapes();
+setInterval(chooseRandomShapes, 4000);
 function background() {
     sq.forEach(square => {
         square.draw();
