@@ -30,7 +30,7 @@ class Ball {
     }
     collide() {
         if (this.position.y > canvas.height - this.rad) {
-            this.vel.y -= 0;
+            this.vel.y -= 0.1;
             this.vel.y *= -1;
             console.log(this.vel);
             // console.log(this.vel.y);
