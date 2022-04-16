@@ -1,43 +1,55 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+// ! CONSTS FOR OUR BALL
+const startingAngle = 70;
+const rad = 20;
 class Ball{
     constructor()
     {
+        this.position = {x:canvas.width/2,y:canvas.height}
         this.vel={x:0,y:-5};
+    }
+    draw()
+    {
+        
     }
     move()
     {
-
+        this.position.y += this.vel.y
     }
     animate()
     {
-
+        
     }
     collide()
     {
         
     }
 }
+ball = new Ball()
 class LineS {
     constructor() {
         this.position = {x:canvas.width/2,y:canvas.height}
         this.ring(this.position.x,this.position.y)
-        this.points=[{x:canvas.width/2,y:canvas.height}]
+        this.points=[{x:canvas.width/2,y:canvas.height,offset_y:0}]
     }
     addPoint(x,y)
     {
-        this.points.push({x:x,y:y,offset:0});
+        this.points.push({x:x,y:y,offset_y:0});
         this.position ={x:x,y:y};
     }
     drawlines()
     {
         var prev=this.points[0];
         this.points.slice(1,).forEach(element => {
-            this.ring(element.x,element.y);
+            this.ring(element.x,element.y-element.offset_y);
             ctx.beginPath();
-            ctx.moveTo(prev.x,prev.y);
-            ctx.lineTo(element.x,element.y);
+            ctx.moveTo(prev.x,prev.y-prev.offset_y);
+            if(element.y>element.offset_y)
+            {
+                ctx.lineTo(element.x,element.y-element.offset_y);
+            }
             ctx.stroke();
             prev=element;
         });
@@ -57,7 +69,8 @@ class LineS {
     hoverline(x,y)
     {
         ctx.beginPath();
-        ctx.moveTo(this.position.x,this.position.y);
+        console.log(this.points[this.points.length-1]);
+        ctx.moveTo(this.points[this.points.length-1].x,this.points[this.points.length-1].y-this.points[this.points.length-1].offset_y);
         ctx.lineTo(x,y);
         ctx.stroke();
     }
@@ -82,7 +95,6 @@ function animate()
     requestAnimationFrame(animate);
     line.drawlines();
     line.hoverline(a.x,a.y)
-    console.log(a);
     // requestAnimationFrame(tick);
 }
 
@@ -90,7 +102,6 @@ function animate()
 canvas.addEventListener("mousedown", function(e)
 {
     t=getMousePosition(canvas, e);
-    console.log(e);
     line.addPoint(t.x,t.y);
 });
 canvas.addEventListener("mousemove", function(e)
