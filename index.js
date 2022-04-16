@@ -9,12 +9,13 @@ class Ball{
         this.position = {x:x,y:3*y/5}
         this.vel={x:0,y:0};
         this.rad = 20;
+        this.offset=0;
     }
     draw()
     {
         ctx.beginPath();
         ctx.fillStyle = 'green';
-        ctx.arc(this.position.x, this.position.y, this.rad, 0, Math.PI * 2);
+        ctx.arc(this.position.x, this.position.y-this.offset, this.rad, 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
     }
@@ -23,6 +24,10 @@ class Ball{
         this.position.y += this.vel.y
         this.position.x += this.vel.x
         this.vel.y+=0.1
+        if(this.position.y<3*(canvas.height-20)/5)
+        {
+            this.offset=this.position.y-3*(canvas.height-20)/5
+        }
         // this.collide()
     }
     animate()
@@ -43,7 +48,7 @@ class Ball{
 ball = new Ball()
 class LineS {
     constructor() {
-        this.points=[{x:0,y:canvas.height+10},{x:canvas.width,y:canvas.height-20}]
+        this.points=[{x:0,y:canvas.height},{x:canvas.width,y:canvas.height}]
         this.currentPoint={x:canvas.width/2,y:canvas.height}
         this.lines=[[this.points[0],this.points[1]]]
     }
@@ -61,8 +66,8 @@ class LineS {
     {
         this.lines.forEach(line => {
             this.drawwline(line[0],line[1]);
-            this.ring(line[0].x,line[0].y);
-            this.ring(line[1].x,line[1].y);
+            this.ring(line[0].x,line[0].y-ball.offset);
+            this.ring(line[1].x,line[1].y-ball.offset);
             this.checkCollide(line[0],line[1],ball.position)
             
         });
@@ -70,9 +75,11 @@ class LineS {
     drawwline(a,b)
     {
         ctx.beginPath();
-        ctx.moveTo(a.x,a.y);
-        ctx.lineTo(b.x,b.y);
+        ctx.stroke_style=15;
+        ctx.moveTo(a.x,a.y-ball.offset);
+        ctx.lineTo(b.x,b.y-ball.offset);
         ctx.stroke();
+        ctx.stroke_style=1;
     }
     checkCollide(pos1,pos2,posball)
     {   
@@ -135,7 +142,7 @@ class LineS {
     {
         ctx.beginPath();
         // console.log(this.points[this.points.length-1]);
-        ctx.moveTo(this.currentPoint.x,this.currentPoint.y);
+        ctx.moveTo(this.currentPoint.x,this.currentPoint.y-ball.offset);
         ctx.lineTo(x,y);
         ctx.stroke();
     }
@@ -169,7 +176,7 @@ function animate()
 canvas.addEventListener("mousedown", function(e)
 {
     t=getMousePosition(canvas, e);
-    line.addPoint(t.x,t.y);
+    line.addPoint(t.x,t.y+ball.offset);
 });
 canvas.addEventListener("mousemove", function(e)
 {
