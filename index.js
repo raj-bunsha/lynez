@@ -8,6 +8,7 @@ class Ball {
         this.vel = { x: 0, y: 0 };
         this.rad = 20;
         this.offset = 0;
+        this.score = 0;
     }
     draw() {
         ctx.beginPath();
@@ -15,6 +16,15 @@ class Ball {
         ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
+        ctx.fillStyle = "white";
+        ctx.font = 'Bold 20px sans-serif';
+        this.score = Math.max(this.score, Math.floor(-this.offset / 10))
+        ctx.fillText(`Score:${this.score}`, 10, 50);
+        if (this.death()) {
+            // console.log("mar gaya");
+            ctx.fillText(`You Died. Press ctrl + R to restart`, canvas.width / 2 - 150, canvas.height / 2);
+
+        }
     }
     move() {
         this.position.y += this.vel.y
@@ -23,6 +33,9 @@ class Ball {
         if (this.position.y < 3 * (canvas.height - 20) / 5) {
             this.offset = this.position.y - 3 * (canvas.height - 20) / 5
         }
+        this.death();
+        sprite.position.x = this.position.x - sprite.width / 2 
+        sprite.position.y = this.position.y - sprite.height / 2 - this.offset
         // this.collide()
     }
     animate() {
@@ -33,9 +46,15 @@ class Ball {
             this.vel.y -= 0.1;
             this.vel.y *= -1;
             console.log(this.vel);
-            // console.log(this.vel.y);
+            // console.log(this.vel.y)  ;
             // console.log("trial for collide  ")
         }
+    }
+    death() {
+        if (this.position.x < 0 || this.position.x > canvas.width) {
+            return true;
+        }
+        return false;
     }
 }
 ball = new Ball()
@@ -198,7 +217,7 @@ function chooseRandomShapes() {
         sq.push(new shape([Math.random() * canvas.width, -Math.floor(Math.random() * 2 * canvas.height / 3)], 40, listShapesSize[Math.floor(Math.random() * 4)]));
     }
 }
-setInterval(chooseRandomShapes, 4000);
+setInterval(chooseRandomShapes, 3000);
 function background() {
     sq.forEach(square => {
         square.draw();
@@ -311,6 +330,71 @@ class Sparker {
 // }
 sparksList = [new Sparker(canvas.width / 2, canvas.height)]
 // ! TRIAL ENDS FOR SPARKS
+
+// ! TRIAL FOR SPRITE STARTS
+
+class Sprite {
+    constructor({
+        position,
+        imageSrc,
+        scale = 1,
+        framesMax = 1,
+        offset = { x: 0, y: 0 }
+    }) {
+        this.position = position;
+        this.width = 50;
+        this.height = 150;
+        this.image = new Image();
+        this.image.src = imageSrc;
+        this.scale = scale;
+        this.framesMax = framesMax;
+        this.framesCurrent = 0;
+        this.framesElapsed = 0;
+        this.framesHold = 5;
+        this.offset = offset;
+    }
+
+    draw() {
+        ctx.drawImage(
+            this.image,
+            this.framesCurrent * (this.image.width / this.framesMax),
+            0,
+            this.image.width / this.framesMax,
+            this.image.height,
+            this.position.x - this.offset.x,
+            this.position.y - this.offset.y,
+            (this.image.width / this.framesMax) * this.scale,
+            this.image.height * this.scale
+        )
+    }
+    animateFrames() {
+        this.framesElapsed++
+
+        if (this.framesElapsed % this.framesHold === 0) {
+            if (this.framesCurrent < this.framesMax - 1) {
+                this.framesCurrent++
+            } else {
+                this.framesCurrent = 0
+            }
+        }
+    }
+    update() {
+        this.draw()
+        this.animateFrames()
+    }
+}
+const sprite = new Sprite({
+    position: {
+        x: 600,
+        y: 300
+    },
+    imageSrc: './fires.jpg',
+    scale: .5,
+    framesMax: 8
+})
+
+// ! TRIAL FOR SPRITE ENDS
+
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#1B0324";
@@ -319,13 +403,17 @@ function animate() {
     ball.draw();
     ball.move();
     line.drawlines(ball);
-    line.hoverline(a.x, a.y);
+    if (!ball.death()) {
+        line.hoverline(a.x, a.y);
+    }
 
     sparksList.forEach(spark => {
         spark.draw();
     });
     // sparks.draw2();
     // sparks2.draw2();
+    // sprite.draw();
+    sprite.update();
     background();
     // requestAnimationFrame(tick);
 }
@@ -333,7 +421,9 @@ function animate() {
 
 canvas.addEventListener("mousedown", function (e) {
     t = getMousePosition(canvas, e);
-    line.addPoint(t.x, t.y + ball.offset);
+    if (!ball.death()) {
+        line.addPoint(t.x, t.y + ball.offset);
+    }
 });
 canvas.addEventListener("mousemove", function (e) {
     a = getMousePosition(canvas, e);;
