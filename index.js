@@ -142,6 +142,65 @@ function getMousePosition(canvas, event) {
 
 const tick = 60;
 var a = { x: 0, y: 0 };
+// !  TRIAL STARTS FOR BACKGROUND SHAPES
+class shape {
+    constructor(center, size, size2) {
+        this.center = center
+        this.angles = []
+        for (let i = 0; i < size2; i++) {
+            this.angles.push(i * 360 / size2);
+        }
+        this.size = size
+    }
+    draw() {
+        ctx.globalAlpha = 0.15;
+        ctx.beginPath();
+        this.points = []
+        var size = this.size;
+        this.angles.forEach(angle => {
+            this.points.push([this.center[0] + Math.sin(angle * Math.PI / 180) * size, this.center[1] + Math.cos(angle * Math.PI / 180) * size])
+        });
+        // for (let index = 0; index < this.angles.length; index++) {
+        //     this.points.push([this.center[0]+Math.sin(angles[i]*Math.PI/180)*size,this.center[1]+Math.cos(angles[i]*Math.PI/180)*size])             
+        // }
+        ctx.moveTo(this.points[0][0], this.points[0][1])
+        this.points.slice(1,).forEach(point => {
+            ctx.lineTo(point[0], point[1])
+        });
+        ctx.closePath();
+        ctx.stroke();
+        this.rotate();
+        ctx.globalAlpha = 1;
+        // this.size -= .1;
+    }
+    // move()
+    // {
+
+    // }
+    rotate() {
+        for (let index = 0; index < this.angles.length; index++) {
+            this.angles[index] += 1;
+        }
+        this.center[1] += 1;
+    }
+}
+
+var sq = []
+function chooseRandomShapes() {
+    var listShapesSize = [3, 4, 5, 6]
+    // var nShapes = Math.floor(Math.random() * 10 + 10)
+    var nShapes = 4;
+    for (let index = 0; index < nShapes; index++) {
+        sq.push(new shape([Math.random() * canvas.width, -Math.floor(Math.random() * 2 * canvas.height / 3)], 40, listShapesSize[Math.floor(Math.random() * 4)]));
+    }
+}
+setInterval(chooseRandomShapes, 1000);
+function background() {
+    sq.forEach(square => {
+        square.draw();
+    });
+}
+// !  TRIAL ENDS FOR BACKGROUND SHAPES
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#1B0324";
@@ -151,6 +210,7 @@ function animate() {
     ball.move();
     line.drawlines(ball);
     line.hoverline(a.x, a.y)
+    background();
     // requestAnimationFrame(tick);
 }
 
@@ -163,5 +223,3 @@ canvas.addEventListener("mousemove", function (e) {
     a = getMousePosition(canvas, e);;
 });
 animate();
-
-
