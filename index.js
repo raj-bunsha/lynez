@@ -6,16 +6,13 @@ var HIGHSCORE = 0
 let Bounce_sound=new Audio('./music/bounce.wav');
 let place_sound=new Audio('./music/place.wav');
 let death_sound=new Audio('./music/death.wav');
-let music=new Audio('./music/music.wav');
+// let music=new Audio('./music/music.wav');
 Bounce_sound.sound=0.9
 place_sound.sound=0.9
 death_sound.sound=0.9
-music.sound=0.9
-music.loop=true;
-music.muted=true
-music.play()
-music.muted=false
-music.play()
+// music.sound=0.9
+// music.play();
+var True=false;
 try {
     HIGHSCORE = window.localStorage.getItem("highscore")
 } catch (err) {
@@ -445,6 +442,11 @@ canvas.addEventListener("mousedown", function (e) {
     if (!ball.death()) {
         line.addPoint(t.x, t.y + ball.offset);
         place_sound.play()
+    }
+    if(!True)
+    {
+        document.getElementById("music").play()
+        True=true;
     }
 });
 canvas.addEventListener("mousemove", function (e) {
