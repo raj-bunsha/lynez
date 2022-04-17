@@ -11,11 +11,11 @@ class Ball {
         this.score = 0;
     }
     draw() {
-        // ctx.beginPath();
-        // ctx.fillStyle = 'green';
-        // ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
-        // ctx.fill();
-        // ctx.closePath();
+        ctx.beginPath();
+        ctx.fillStyle = 'green';
+        ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.closePath();
         ctx.fillStyle = "white";
         ctx.font = 'Bold 20px sans-serif';
         this.score = Math.max(this.score, Math.floor(-this.offset / 10))
@@ -34,8 +34,8 @@ class Ball {
             this.offset = this.position.y - 3 * (canvas.height - 20) / 5
         }
         this.death();
-        sprite.position.x = this.position.x - listSprites[Math.floor(sprite.index / 4)].width / 2
-        sprite.position.y = this.position.y - listSprites[Math.floor(sprite.index / 4)].height + this.rad
+        // sprite.position.x = this.position.x - listSprites[Math.floor(sprite.index / 4)].width / 2
+        // sprite.position.y = this.position.y - listSprites[Math.floor(sprite.index / 4)].height + this.rad
         // this.collide()
     }
     animate() {
@@ -45,7 +45,7 @@ class Ball {
         if (this.position.y > canvas.height - this.rad) {
             this.vel.y -= 0.1;
             this.vel.y *= -1;
-            console.log(this.vel);
+            // console.log(this.vel);
             // console.log(this.vel.y)  ;
             // console.log("trial for collide  ")
         }
@@ -397,28 +397,44 @@ sparksList = [new Sparker(canvas.width / 2, canvas.height)]
 // ! TRIAL FOR SPRITE ENDS
 
 // ! TRIAL FOR NEW SPRITES STARTS
-const listSprites = []
-var nSprites = 8
-for (let index = 0; index < nSprites; index++) {
-    image = new Image()
-    image.src = `./sprites/sprite${index + 1}.png`
-    listSprites.push(image);
-}
+// const listSprites = []
+// var nSprites = 8
+// for (let index = 0; index < nSprites; index++) {
+//     image = new Image()
+//     image.src = `./sprites/sprite${index + 1}.png`
+//     listSprites.push(image);
+// }
 
-class Sprite {
-    constructor() {
-        this.position = { x: ball.position.x, y: ball.position.y }
-        this.index = 0;
-    }
-    draw() {
-        ctx.drawImage(listSprites[Math.floor(this.index / 4)], this.position.x, this.position.y - ball.offset);
-        this.index++;
-        if (this.index > 4 * nSprites - 1) {
-            this.index = 0;
-        }
-    }
-}
-sprite = new Sprite();
+// class Sprite {
+//     constructor() {
+//         this.position = { x: ball.position.x, y: ball.position.y }
+//         this.index = 0;
+//     }
+//     draw() 
+//     {
+//         if(ball.vel.y >= 0)
+//         {
+//             this.angle=Math.atan2((ball.vel.y),(ball.vel.x))*180/Math.PI
+//             console.log("ball angle",ball.vel,this.angle)   
+//             ctx.translate(this.position.x,this.position.y);
+//             ctx.rotate((90-this.angle)*Math.PI/180);
+//             // ctx.drawImage(listSprites[Math.floor(this.index / 4)], this.position.x, this.position.y - ball.offset);
+//             ctx.drawImage(listSprites[Math.floor(this.index / 4)], 0,- ball.offset);
+//             this.index++;
+//             if (this.index > 4 * nSprites - 1) {
+//                 this.index = 0;
+//             }
+//             ctx.rotate((this.angle-90)*Math.PI/180);
+//             ctx.translate(-this.position.x,-this.position.y);
+//         }
+//     }
+// }
+// function DegToRad(d)  
+// {  
+//     // Converts degrees to radians  
+//     return d*(Math.PI/180)
+// }
+// var sprite = new Sprite();
 // ! TRIAL FOR NEW SPRITES ENDS
 var shake = true
 var screen_shake = 0
@@ -429,6 +445,7 @@ function animate() {
     requestAnimationFrame(animate);
     ball.draw();
     ball.move();
+    // console.log(ball)
     line.drawlines(ball);
     if (!ball.death()) {
         line.hoverline(a.x, a.y);
@@ -440,13 +457,15 @@ function animate() {
         }
     }
     if (screen_shake) {
-        ball.offset += Math.random() * 100 - 50;
+        ball.offset += Math.random() * 20 - 10;
+        if(ball.vel.y>0)
+        ball.vel.y=-ball.vel.y
         screen_shake -= 1
     }
+    console.log(screen_shake)
     sparksList.forEach(spark => {
         spark.draw();
     });
-    sprite.draw();
     background();
     // requestAnimationFrame(tick);
 }
