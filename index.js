@@ -8,6 +8,7 @@ class Ball {
         this.vel = { x: 0, y: 0 };
         this.rad = 20;
         this.offset = 0;
+        this.score = 0;
     }
     draw() {
         ctx.beginPath();
@@ -15,6 +16,15 @@ class Ball {
         ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
+        ctx.fillStyle = "white";
+        ctx.font = 'Bold 20px sans-serif';
+        this.score = Math.max(this.score, Math.floor(-this.offset / 10))
+        ctx.fillText(`Score:${this.score}`, 10, 50);
+        if (this.death()) {
+            // console.log("mar gaya");
+            ctx.fillText(`You Died. Press ctrl + R to restart`, canvas.width / 2 - 150, canvas.height / 2);
+
+        }
     }
     move() {
         this.position.y += this.vel.y
@@ -23,6 +33,9 @@ class Ball {
         if (this.position.y < 3 * (canvas.height - 20) / 5) {
             this.offset = this.position.y - 3 * (canvas.height - 20) / 5
         }
+        this.death();
+        sprite.position.x = this.position.x - sprite.width / 2 
+        sprite.position.y = this.position.y - sprite.height / 2 - this.offset
         // this.collide()
     }
     animate() {
@@ -33,8 +46,15 @@ class Ball {
             this.vel.y -= 0.1;
             this.vel.y *= -1;
             console.log(this.vel);
-            // console.log(this.vel.y);
+            // console.log(this.vel.y)  ;
+            // console.log("trial for collide  ")
         }
+    }
+    death() {
+        if (this.position.x < 0 || this.position.x > canvas.width) {
+            return true;
+        }
+        return false;
     }
 }
 ball = new Ball()
@@ -47,7 +67,10 @@ class LineS {
     addPoint(x, y) {
         // this.points.push({x:x,y:y,offset_y:0});
         this.addline(this.currentPoint, { x: x, y: y })
+        // console.log("comment for sparks");
         this.currentPoint = { x: x, y: y };
+        sparksList.push(new Sparker(this.currentPoint.x, this.currentPoint.y));
+
     }
     addline(point1, point2) {
         this.lines.push([point1, point2])
@@ -194,13 +217,184 @@ function chooseRandomShapes() {
         sq.push(new shape([Math.random() * canvas.width, -Math.floor(Math.random() * 2 * canvas.height / 3)], 40, listShapesSize[Math.floor(Math.random() * 4)]));
     }
 }
-setInterval(chooseRandomShapes, 4000);
+setInterval(chooseRandomShapes, 3000);
 function background() {
     sq.forEach(square => {
         square.draw();
     });
 }
 // !  TRIAL ENDS FOR BACKGROUND SHAPES
+
+// ! TRIAL STARTS FOR SPARKS
+sparks = []
+class Spark {
+    constructor(loc, angle, speed, color, scale = 1) {
+        this.loc = loc
+        this.angle = angle
+        this.speed = speed
+        this.scale = scale
+        this.color = color
+        this.alive = true
+    }
+    point_towards(angle, rate) {
+        rotate_direction = ((angle - this.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+        if (rotate_direction != 0) {
+            rotate_sign = Math.abs(rotate_direction) / rotate_direction
+        }
+        if (Math.abs(rotate_direction) < rate) {
+            this.angle = angle;
+        }
+        else {
+            this.angle += rate * rotate_sign
+        }
+    }
+
+    calculate_movement(dt) {
+        return [Math.cos(this.angle) * this.speed * dt, Math.sin(this.angle) * this.speed * dt]
+    }
+
+    // # gravity and friction
+    velocity_adjust(friction, force, terminal_velocity, dt) {
+        var movement = this.calculate_movement(dt)
+        movement[1] = min(terminal_velocity, movement[1] + force * dt)
+        movement[0] *= friction
+        this.angle = Math.atan2(movement[1], movement[0])
+    }
+    //     # if you want to get more realistic, the speed should be adjusted here
+
+    move(dt) {
+        var movement = this.calculate_movement(dt)
+        this.loc[0] += movement[0]
+        this.loc[1] += movement[1]
+        this.speed -= 0.1
+
+        if (this.speed <= 0) {
+            this.alive = false;
+        }
+    }
+
+    //     # a bunch of options to mess around with relating to angles...
+    //     #this.point_towards(Math.PI / 2, 0.02)
+    //     #this.velocity_adjust(0.975, 0.2, 8, dt)
+    //     #this.angle += 0.1
+
+
+    draw(offset = [0, 0]) {
+        var points = []
+        if (this.alive) {
+            var points = [
+                [this.loc[0] + Math.cos(this.angle) * this.speed * this.scale, this.loc[1] + Math.sin(this.angle) * this.speed * this.scale],
+                [this.loc[0] + Math.cos(this.angle + Math.PI / 2) * this.speed * this.scale * 0.3, this.loc[1] + Math.sin(this.angle + Math.PI / 2) * this.speed * this.scale * 0.3],
+                [this.loc[0] - Math.cos(this.angle) * this.speed * this.scale * 3.5, this.loc[1] - Math.sin(this.angle) * this.speed * this.scale * 3.5],
+                [this.loc[0] + Math.cos(this.angle - Math.PI / 2) * this.speed * this.scale * 0.3, this.loc[1] - Math.sin(this.angle + Math.PI / 2) * this.speed * this.scale * 0.3],
+            ]
+            ctx.fillStyle = this.color
+            ctx.beginPath()
+            ctx.moveTo(points[0][0], points[0][1])
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i][0], points[i][1])
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }
+    }
+}
+class Sparker {
+    constructor(POSX, POSY) {
+        this.sparks = []
+        this.POSX = POSX
+        this.POSY = POSY
+    }
+    draw() {
+        var POSX = this.POSX
+        var POSY = this.POSY - ball.offset
+        this.sparks.push(new Spark([POSX, POSY], Math.random() * 2 * Math.PI, Math.random() * 2 + 2, "#000", 1))
+        this.sparks.sort()
+        this.sparks.reverse()
+        // console.log(POSX,POSY);
+        for (let i = 0; i < this.sparks.length; i++) {
+            this.sparks[i].move(1)
+            this.sparks[i].draw()
+            if (!this.sparks[i].alive) {
+                // sparks.pop(i)
+                // sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*3+3,"#000",1))
+            }
+        }
+        if (this.sparks.length > 10) {
+            this.sparks = this.sparks.slice(5,)
+        }
+    }
+}
+// for (let i = 0; i < 50;i++) {
+//     sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*3+3,"#000",2))
+// }
+sparksList = [new Sparker(canvas.width / 2, canvas.height)]
+// ! TRIAL ENDS FOR SPARKS
+
+// ! TRIAL FOR SPRITE STARTS
+
+class Sprite {
+    constructor({
+        position,
+        imageSrc,
+        scale = 1,
+        framesMax = 1,
+        offset = { x: 0, y: 0 }
+    }) {
+        this.position = position;
+        this.width = 50;
+        this.height = 150;
+        this.image = new Image();
+        this.image.src = imageSrc;
+        this.scale = scale;
+        this.framesMax = framesMax;
+        this.framesCurrent = 0;
+        this.framesElapsed = 0;
+        this.framesHold = 5;
+        this.offset = offset;
+    }
+
+    draw() {
+        ctx.drawImage(
+            this.image,
+            this.framesCurrent * (this.image.width / this.framesMax),
+            0,
+            this.image.width / this.framesMax,
+            this.image.height,
+            this.position.x - this.offset.x,
+            this.position.y - this.offset.y,
+            (this.image.width / this.framesMax) * this.scale,
+            this.image.height * this.scale
+        )
+    }
+    animateFrames() {
+        this.framesElapsed++
+
+        if (this.framesElapsed % this.framesHold === 0) {
+            if (this.framesCurrent < this.framesMax - 1) {
+                this.framesCurrent++
+            } else {
+                this.framesCurrent = 0
+            }
+        }
+    }
+    update() {
+        this.draw()
+        this.animateFrames()
+    }
+}
+const sprite = new Sprite({
+    position: {
+        x: 600,
+        y: 300
+    },
+    imageSrc: './fires.jpg',
+    scale: .5,
+    framesMax: 8
+})
+
+// ! TRIAL FOR SPRITE ENDS
+
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#1B0324";
@@ -209,7 +403,16 @@ function animate() {
     ball.draw();
     ball.move();
     line.drawlines(ball);
-    line.hoverline(a.x, a.y)
+    if (!ball.death()) {
+        line.hoverline(a.x, a.y);
+    }
+
+    sparksList.forEach(spark => {
+        spark.draw();
+    });
+    // sparks.draw2();
+    // sparks2.draw2();
+    // sprite.update()  ;
     background();
     // requestAnimationFrame(tick);
 }
@@ -217,7 +420,9 @@ function animate() {
 
 canvas.addEventListener("mousedown", function (e) {
     t = getMousePosition(canvas, e);
-    line.addPoint(t.x, t.y + ball.offset);
+    if (!ball.death()) {
+        line.addPoint(t.x, t.y + ball.offset);
+    }
 });
 canvas.addEventListener("mousemove", function (e) {
     a = getMousePosition(canvas, e);;
