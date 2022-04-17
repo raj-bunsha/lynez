@@ -412,8 +412,7 @@ function animate() {
     });
     // sparks.draw2();
     // sparks2.draw2();
-    // sprite.draw();
-    sprite.update();
+    // sprite.update()  ;
     background();
     // requestAnimationFrame(tick);
 }
