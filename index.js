@@ -1,6 +1,9 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 // ctx.fillStyle = "#1B0324";
+var sparkpos
+var HIGHSCORE = 0
+
 // ! CONSTS FOR OUR BALL
 class Ball {
     constructor(x = canvas.width / 2, y = canvas.height - 20) {
@@ -20,8 +23,8 @@ class Ball {
         ctx.font = 'Bold 20px sans-serif';
         this.score = Math.max(this.score, Math.floor(-this.offset / 10))
         ctx.fillText(`Score:${this.score}`, 10, 50);
+        ctx.fillText(`High Score:${Math.max(this.score, HIGHSCORE)}`, canvas.width - 200, 50);
         if (this.death()) {
-            // console.log("mar gaya");
             ctx.fillText(`YOU DIED! PRESS CTRL+R TO RESTART `, canvas.width / 2 - 190, canvas.height / 2);
         }
     }
@@ -45,13 +48,10 @@ class Ball {
             this.vel.y -= 0.1;
             this.vel.y *= -1;
             console.log(this.vel);
-            // console.log(this.vel.y)  ;
-            // console.log("trial for collide  ")
         }
     }
     death() {
         if (this.position.x < 0 || this.position.x > canvas.width) {
-            // console.log("mar gaya re"); 
             return true;
         }
         return false;
@@ -66,14 +66,18 @@ class LineS {
     }
     addPoint(x, y) {
         // this.points.push({x:x,y:y,offset_y:0});
-        this.addline(this.currentPoint, { x: x, y: y })
-        // console.log("comment for sparks");
+        this.addline(this.currentPoint, { x: x, y: y });
+        console.log(x, y);
         this.currentPoint = { x: x, y: y };
         sparksList.push(new Sparker(this.currentPoint.x, this.currentPoint.y));
 
     }
     addline(point1, point2) {
+        console.log("LINE ADDED")
         this.lines.push([point1, point2])
+        console.log(point1, point2)
+        console.log(ball.offset);
+        console.log(this.lines.length)
     }
     drawlines(ball) {
         this.lines.forEach(line => {
@@ -92,15 +96,14 @@ class LineS {
         ctx.lineTo(b.x, b.y - ball.offset);
         ctx.stroke();
         ctx.stroke_style = 1;
+
     }
     checkCollide(pos1, pos2, posball) {
         const den = ((pos2.x - pos1.x) * (pos2.x - pos1.x) + (pos2.y - pos1.y) * (pos2.y - pos1.y));
         const t = -((pos1.x - posball.x) * (pos2.x - pos1.x) + (pos1.y - posball.y) * (pos2.y - pos1.y)) / den;
         if (t <= 1 && t >= 0) {
-            // console.log("HERE")
             var d = Math.abs((pos2.x - pos1.x) * (pos1.y - posball.y) - (pos2.y - pos1.y) * (pos1.x - posball.x));
             d = d / Math.sqrt(den);
-            // console.log(d);
             if (d < 20) {
                 if (ball.vel.y > 0) {
                     ball.vel.y = -1;
@@ -111,7 +114,8 @@ class LineS {
                     // ball.vel=this.sub(ball.vel,this.mult(2*this.dot(ball.vel,n),n))
                     ball.vel = this.unit(ball.vel);
                     ball.vel = this.mult(9, ball.vel)
-                    console.log(ball.vel)
+                    var anglesp = Math.atan2(ball.vel.y, ball.vel.x);
+                    sparkpos = [ball.position.x - 20 * Math.cos(anglesp), ball.position.y + 20 * Math.sin(anglesp)];
                 }
 
             }
@@ -198,7 +202,6 @@ class shape {
     }
     // move()
     // {
-
     // }
     rotate() {
         for (let index = 0; index < this.angles.length; index++) {
@@ -217,16 +220,31 @@ function chooseRandomShapes() {
         sq.push(new shape([Math.random() * canvas.width, -Math.floor(Math.random() * 2 * canvas.height / 3)], 40, listShapesSize[Math.floor(Math.random() * 4)]));
     }
 }
-setInterval(chooseRandomShapes, 3000);
+function randomplatforms() {
+    console.log("CALLED")
+    t = Math.random() * canvas.height
+    line.addline({ x: canvas.width * Math.random(), y: t - canvas.height + ball.offset }, { x: canvas.width * Math.random(), y: Math.random() * 100 + t - 50 - canvas.height + ball.offset })
+    // console.log(ball.offset)
+}
+setInterval(chooseRandomShapes, 5000);
+setInterval(randomplatforms, 7000);
 function background() {
     sq.forEach(square => {
         square.draw();
     });
+    console.log(sq.length)
+    for (let i = 0; i < sq.length; i++) {
+        if (sq[i].center[1] >= 3 * canvas.height / 4) {
+            sq = sq.slice(i + 1,)
+            console.log("REMOVED", sq.length)
+        }
+    }
 }
 // !  TRIAL ENDS FOR BACKGROUND SHAPES
 
 // ! TRIAL STARTS FOR SPARKS
 sparks = []
+var coll_sparks = []
 class Spark {
     constructor(loc, angle, speed, color, scale = 1) {
         this.loc = loc
@@ -331,70 +349,6 @@ class Sparker {
 sparksList = [new Sparker(canvas.width / 2, canvas.height)]
 // ! TRIAL ENDS FOR SPARKS
 
-// ! TRIAL FOR SPRITE STARTS
-
-// class Sprite {
-//     constructor({
-//         position,
-//         imageSrc,
-//         scale = 1,
-//         framesMax = 1,
-//         offset = { x: 0, y: 0 }
-//     }) {
-//         this.position = position;
-//         this.width = 50;
-//         this.height = 150;
-//         this.image = new Image();
-//         this.image.src = imageSrc;
-//         this.scale = scale;
-//         this.framesMax = framesMax;
-//         this.framesCurrent = 0;
-//         this.framesElapsed = 0;
-//         this.framesHold = 5;
-//         this.offset = offset;
-//     }
-
-//     draw() {
-//         ctx.drawImage(
-//             this.image,
-//             this.framesCurrent * (this.image.width / this.framesMax),
-//             0,
-//             this.image.width / this.framesMax,
-//             this.image.height,
-//             this.position.x - this.offset.x,
-//             this.position.y - this.offset.y,
-//             (this.image.width / this.framesMax) * this.scale,
-//             this.image.height * this.scale
-//         )
-//     }
-//     animateFrames() {
-//         this.framesElapsed++
-
-//         if (this.framesElapsed % this.framesHold === 0) {
-//             if (this.framesCurrent < this.framesMax - 1) {
-//                 this.framesCurrent++
-//             } else {
-//                 this.framesCurrent = 0
-//             }
-//         }
-//     }
-//     update() {
-//         this.draw()
-//         this.animateFrames()
-//     }
-// }
-// const sprite = new Sprite({
-//     position: {
-//         x: 600,
-//         y: 300
-//     },
-//     imageSrc: './fires.jpg',
-//     scale: .5,
-//     framesMax: 8
-// })
-
-// ! TRIAL FOR SPRITE ENDS
-
 // ! TRIAL FOR NEW SPRITES STARTS
 const listSprites = []
 var nSprites = 8
@@ -417,6 +371,7 @@ class Sprite {
         }
     }
 }
+var flag = true
 sprite = new Sprite();
 // ! TRIAL FOR NEW SPRITES ENDS
 var shake = true
