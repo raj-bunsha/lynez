@@ -11,6 +11,12 @@ Bounce_sound.sound=0.9
 place_sound.sound=0.9
 death_sound.sound=0.9
 
+try {
+    HIGHSCORE = window.localStorage.getItem("highscore")
+} catch (err) {
+    HIGHSCORE = 0
+    window.localStorage.setItem("highscore", HIGHSCORE)
+}
 // ! CONSTS FOR OUR BALL
 class Ball {
     constructor(x = canvas.width / 2, y = canvas.height - 20) {
@@ -30,7 +36,8 @@ class Ball {
         ctx.font = 'Bold 20px sans-serif';
         this.score = Math.max(this.score, Math.floor(-this.offset / 10))
         ctx.fillText(`Score:${this.score}`, 10, 50);
-        ctx.fillText(`High Score:${Math.max(this.score, HIGHSCORE)}`, canvas.width - 200, 50);
+        HIGHSCORE = Math.max(this.score, HIGHSCORE)
+        ctx.fillText(`High Score:${HIGHSCORE}`, canvas.width - 200, 50);
         if (this.death()) {
             ctx.fillText(`YOU DIED! PRESS CTRL+R TO RESTART `, canvas.width / 2 - 190, canvas.height / 2);
         }
@@ -57,7 +64,7 @@ class Ball {
             // console.log(this.vel);
             // console.log(this.vel.y)  ;
             // console.log("trial for collide  ")
-            console.log(this.vel);
+            // console.log(this.vel);
         }
     }
     death() {
@@ -77,7 +84,7 @@ class LineS {
     addPoint(x, y) {
         // this.points.push({x:x,y:y,offset_y:0});
         this.addline(this.currentPoint, { x: x, y: y });
-        console.log(x, y);
+        // console.log(x, y);
         this.currentPoint = { x: x, y: y };
         sparksList.push(new Sparker(this.currentPoint.x, this.currentPoint.y));
 
@@ -85,9 +92,9 @@ class LineS {
     addline(point1, point2) {
         console.log("LINE ADDED")
         this.lines.push([point1, point2])
-        console.log(point1, point2)
-        console.log(ball.offset);
-        console.log(this.lines.length)
+        // console.log(point1, point2)
+        // console.log(ball.offset);
+        // console.log(this.lines.length)
     }
     drawlines(ball) {
         this.lines.forEach(line => {
@@ -233,7 +240,7 @@ function chooseRandomShapes() {
     }
 }
 function randomplatforms() {
-    console.log("CALLED")
+    // console.log("CALLED")
     t = Math.random() * canvas.height
     line.addline({ x: canvas.width * Math.random(), y: t - canvas.height + ball.offset }, { x: canvas.width * Math.random(), y: Math.random() * 100 + t - 50 - canvas.height + ball.offset })
     // console.log(ball.offset)
@@ -244,7 +251,7 @@ function background() {
     sq.forEach(square => {
         square.draw();
     });
-    console.log(sq.length)
+    // console.log(sq.length)
     for (let i = 0; i < sq.length; i++) {
         if (sq[i].center[1] >= canvas.height) {
             sq = sq.slice(i + 1,)
@@ -410,15 +417,18 @@ function animate() {
     }
     if (screen_shake) {
         ball.offset += Math.random() * 20 - 10;
-        if(ball.vel.y>0)
-        ball.vel.y=-ball.vel.y
+        if (ball.vel.y > 0)
+            ball.vel.y = -ball.vel.y
         screen_shake -= 1
     }
-    console.log(screen_shake)
+    // console.log(screen_shake)
     sparksList.forEach(spark => {
         spark.draw();
     });
     background();
+    if (ball.death()) {
+        window.localStorage.setItem("highscore", HIGHSCORE);
+    }
     // requestAnimationFrame(tick);
 }
 
