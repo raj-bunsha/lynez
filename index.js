@@ -11,18 +11,18 @@ class Ball {
         this.score = 0;
     }
     draw() {
-        ctx.beginPath();
-        ctx.fillStyle = 'green';
-        ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.closePath();
+        // ctx.beginPath();
+        // ctx.fillStyle = 'green';
+        // ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
+        // ctx.fill();
+        // ctx.closePath();
         ctx.fillStyle = "white";
         ctx.font = 'Bold 20px sans-serif';
         this.score = Math.max(this.score, Math.floor(-this.offset / 10))
         ctx.fillText(`Score:${this.score}`, 10, 50);
         if (this.death()) {
             // console.log("mar gaya");
-            ctx.fillText(`You Died. Press ctrl + R to restart`, canvas.width / 2 - 150, canvas.height / 2);
+            ctx.fillText(`YOU DIED! PRESS CTRL+R TO RESTART `, canvas.width / 2 - 150, canvas.height / 2);
 
         }
     }
@@ -34,8 +34,8 @@ class Ball {
             this.offset = this.position.y - 3 * (canvas.height - 20) / 5
         }
         this.death();
-        sprite.position.x = this.position.x - sprite.width / 2 
-        sprite.position.y = this.position.y - sprite.height / 2 - this.offset
+        sprite.position.x = this.position.x - listSprites[Math.floor(sprite.index / 4)].width / 2
+        sprite.position.y = this.position.y - listSprites[Math.floor(sprite.index / 4)].height + this.rad
         // this.collide()
     }
     animate() {
@@ -52,6 +52,7 @@ class Ball {
     }
     death() {
         if (this.position.x < 0 || this.position.x > canvas.width) {
+            // console.log("mar gaya re"); 
             return true;
         }
         return false;
@@ -333,68 +334,94 @@ sparksList = [new Sparker(canvas.width / 2, canvas.height)]
 
 // ! TRIAL FOR SPRITE STARTS
 
-class Sprite {
-    constructor({
-        position,
-        imageSrc,
-        scale = 1,
-        framesMax = 1,
-        offset = { x: 0, y: 0 }
-    }) {
-        this.position = position;
-        this.width = 50;
-        this.height = 150;
-        this.image = new Image();
-        this.image.src = imageSrc;
-        this.scale = scale;
-        this.framesMax = framesMax;
-        this.framesCurrent = 0;
-        this.framesElapsed = 0;
-        this.framesHold = 5;
-        this.offset = offset;
-    }
+// class Sprite {
+//     constructor({
+//         position,
+//         imageSrc,
+//         scale = 1,
+//         framesMax = 1,
+//         offset = { x: 0, y: 0 }
+//     }) {
+//         this.position = position;
+//         this.width = 50;
+//         this.height = 150;
+//         this.image = new Image();
+//         this.image.src = imageSrc;
+//         this.scale = scale;
+//         this.framesMax = framesMax;
+//         this.framesCurrent = 0;
+//         this.framesElapsed = 0;
+//         this.framesHold = 5;
+//         this.offset = offset;
+//     }
 
-    draw() {
-        ctx.drawImage(
-            this.image,
-            this.framesCurrent * (this.image.width / this.framesMax),
-            0,
-            this.image.width / this.framesMax,
-            this.image.height,
-            this.position.x - this.offset.x,
-            this.position.y - this.offset.y,
-            (this.image.width / this.framesMax) * this.scale,
-            this.image.height * this.scale
-        )
-    }
-    animateFrames() {
-        this.framesElapsed++
+//     draw() {
+//         ctx.drawImage(
+//             this.image,
+//             this.framesCurrent * (this.image.width / this.framesMax),
+//             0,
+//             this.image.width / this.framesMax,
+//             this.image.height,
+//             this.position.x - this.offset.x,
+//             this.position.y - this.offset.y,
+//             (this.image.width / this.framesMax) * this.scale,
+//             this.image.height * this.scale
+//         )
+//     }
+//     animateFrames() {
+//         this.framesElapsed++
 
-        if (this.framesElapsed % this.framesHold === 0) {
-            if (this.framesCurrent < this.framesMax - 1) {
-                this.framesCurrent++
-            } else {
-                this.framesCurrent = 0
-            }
-        }
-    }
-    update() {
-        this.draw()
-        this.animateFrames()
-    }
-}
-const sprite = new Sprite({
-    position: {
-        x: 600,
-        y: 300
-    },
-    imageSrc: './fires.jpg',
-    scale: .5,
-    framesMax: 8
-})
+//         if (this.framesElapsed % this.framesHold === 0) {
+//             if (this.framesCurrent < this.framesMax - 1) {
+//                 this.framesCurrent++
+//             } else {
+//                 this.framesCurrent = 0
+//             }
+//         }
+//     }
+//     update() {
+//         this.draw()
+//         this.animateFrames()
+//     }
+// }
+// const sprite = new Sprite({
+//     position: {
+//         x: 600,
+//         y: 300
+//     },
+//     imageSrc: './fires.jpg',
+//     scale: .5,
+//     framesMax: 8
+// })
 
 // ! TRIAL FOR SPRITE ENDS
 
+// ! TRIAL FOR NEW SPRITES STARTS
+const listSprites = []
+var nSprites = 8
+for (let index = 0; index < nSprites; index++) {
+    image = new Image()
+    image.src = `./sprites/sprite${index + 1}.png`
+    listSprites.push(image);
+}
+
+class Sprite {
+    constructor() {
+        this.position = { x: ball.position.x, y: ball.position.y }
+        this.index = 0;
+    }
+    draw() {
+        ctx.drawImage(listSprites[Math.floor(this.index / 4)], this.position.x, this.position.y - ball.offset);
+        this.index++;
+        if (this.index > 4 * nSprites - 1) {
+            this.index = 0;
+        }
+    }
+}
+sprite = new Sprite();
+// ! TRIAL FOR NEW SPRITES ENDS
+var shake = true
+var screen_shake = 0
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#1B0324";
@@ -406,13 +433,20 @@ function animate() {
     if (!ball.death()) {
         line.hoverline(a.x, a.y);
     }
-
+    else {
+        if (shake) {
+            screen_shake = 15
+            shake = false
+        }
+    }
+    if (screen_shake) {
+        ball.offset += Math.random() * 100 - 50;
+        screen_shake -= 1
+    }
     sparksList.forEach(spark => {
         spark.draw();
     });
-    // sparks.draw2();
-    // sparks2.draw2();
-    // sprite.update()  ;
+    sprite.draw();
     background();
     // requestAnimationFrame(tick);
 }
