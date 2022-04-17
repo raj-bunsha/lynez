@@ -361,36 +361,21 @@ sparksList = [new Sparker(canvas.width / 2, canvas.height)]
 //     listSprites.push(image);
 // }
 
-// class Sprite {
-//     constructor() {
-//         this.position = { x: ball.position.x, y: ball.position.y }
-//         this.index = 0;
-//     }
-//     draw() 
-//     {
-//         if(ball.vel.y >= 0)
-//         {
-//             this.angle=Math.atan2((ball.vel.y),(ball.vel.x))*180/Math.PI
-//             console.log("ball angle",ball.vel,this.angle)   
-//             ctx.translate(this.position.x,this.position.y);
-//             ctx.rotate((90-this.angle)*Math.PI/180);
-//             // ctx.drawImage(listSprites[Math.floor(this.index / 4)], this.position.x, this.position.y - ball.offset);
-//             ctx.drawImage(listSprites[Math.floor(this.index / 4)], 0,- ball.offset);
-//             this.index++;
-//             if (this.index > 4 * nSprites - 1) {
-//                 this.index = 0;
-//             }
-//             ctx.rotate((this.angle-90)*Math.PI/180);
-//             ctx.translate(-this.position.x,-this.position.y);
-//         }
-//     }
-// }
-// function DegToRad(d)  
-// {  
-//     // Converts degrees to radians  
-//     return d*(Math.PI/180)
-// }
-// var sprite = new Sprite();
+class Sprite {
+    constructor() {
+        this.position = { x: ball.position.x, y: ball.position.y }
+        this.index = 0;
+    }
+    draw() {
+        ctx.drawImage(listSprites[Math.floor(this.index / 4)], this.position.x, this.position.y - ball.offset);
+        this.index++;
+        if (this.index > 4 * nSprites - 1) {
+            this.index = 0;
+        }
+    }
+}
+var flag = true
+sprite = new Sprite();
 // ! TRIAL FOR NEW SPRITES ENDS
 var shake = true
 var screen_shake = 0
