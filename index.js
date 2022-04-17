@@ -22,8 +22,7 @@ class Ball {
         ctx.fillText(`Score:${this.score}`, 10, 50);
         if (this.death()) {
             // console.log("mar gaya");
-            ctx.fillText(`YOU DIED! PRESS CTRL+R TO RESTART `, canvas.width / 2 - 150, canvas.height / 2);
-
+            ctx.fillText(`YOU DIED! PRESS CTRL+R TO RESTART `, canvas.width / 2 - 190, canvas.height / 2);
         }
     }
     move() {
@@ -440,7 +439,7 @@ function animate() {
         }
     }
     if (screen_shake) {
-        ball.offset += Math.random() * 100 - 50;
+        ball.offset += Math.random() * 10 - 5;
         screen_shake -= 1
     }
     sparksList.forEach(spark => {
