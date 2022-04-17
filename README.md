@@ -25,6 +25,6 @@ Just click and play. If the ball hits the side - YOU LOSE! After each level, pla
 
 ## Authors
 
-- [@raj-bunsha](https://github.com/raj-bunsha)
-- [@RohitShah1706](https://github.com/RohitShah1706)
+- [raj-bunsha](https://github.com/raj-bunsha)
+- [RohitShah1706](https://github.com/RohitShah1706)
 
