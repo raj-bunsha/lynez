@@ -10,7 +10,12 @@ let music=new Audio('./music/music.wav');
 Bounce_sound.sound=0.9
 place_sound.sound=0.9
 death_sound.sound=0.9
-
+music.sound=0.9
+music.loop=true;
+music.muted=true
+music.play()
+music.muted=false
+music.play()
 try {
     HIGHSCORE = window.localStorage.getItem("highscore")
 } catch (err) {
