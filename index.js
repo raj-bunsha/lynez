@@ -3,6 +3,13 @@ const ctx = canvas.getContext('2d');
 // ctx.fillStyle = "#1B0324";
 var sparkpos
 var HIGHSCORE = 0
+let Bounce_sound=new Audio('./music/bounce.wav');
+let place_sound=new Audio('./music/place.wav');
+let death_sound=new Audio('./music/death.wav');
+let music=new Audio('./music/music.wav');
+Bounce_sound.sound=0.9
+place_sound.sound=0.9
+death_sound.sound=0.9
 
 // ! CONSTS FOR OUR BALL
 class Ball {
@@ -107,20 +114,22 @@ class LineS {
         if (t <= 1 && t >= 0) {
             var d = Math.abs((pos2.x - pos1.x) * (pos1.y - posball.y) - (pos2.y - pos1.y) * (pos1.x - posball.x));
             d = d / Math.sqrt(den);
-            if (d < 20) {
+            if (d <= 20) {
                 if (ball.vel.y > 0) {
                     ball.vel.y = -1;
                     var m = (pos2.y - pos1.y) / (pos2.x - pos1.x);
+                    m=Math.min(m,100);
                     ball.vel.x = m;
                     // var n={x:m,y:-1}
                     // n=this.unit(n)
                     // ball.vel=this.sub(ball.vel,this.mult(2*this.dot(ball.vel,n),n))
                     ball.vel = this.unit(ball.vel);
                     ball.vel = this.mult(9, ball.vel)
-                    var anglesp = Math.atan2(ball.vel.y, ball.vel.x);
-                    sparkpos = [ball.position.x - 20 * Math.cos(anglesp), ball.position.y + 20 * Math.sin(anglesp)];
+                    // var anglesp = Math.atan2(ball.vel.y, ball.vel.x);
+                    // sparkpos = [ball.position.x - 20 * Math.cos(anglesp), ball.position.y + 20 * Math.sin(anglesp)];
+                    Bounce_sound.play()
                 }
-
+                
             }
         }
     }
@@ -237,9 +246,9 @@ function background() {
     });
     console.log(sq.length)
     for (let i = 0; i < sq.length; i++) {
-        if (sq[i].center[1] >= 3 * canvas.height / 4) {
+        if (sq[i].center[1] >= canvas.height) {
             sq = sq.slice(i + 1,)
-            console.log("REMOVED", sq.length)
+            // console.log("REMOVED", sq.length)
         }
     }
 }
@@ -396,6 +405,7 @@ function animate() {
         if (shake) {
             screen_shake = 15
             shake = false
+            death_sound.play()
         }
     }
     if (screen_shake) {
@@ -416,6 +426,7 @@ canvas.addEventListener("mousedown", function (e) {
     t = getMousePosition(canvas, e);
     if (!ball.death()) {
         line.addPoint(t.x, t.y + ball.offset);
+        place_sound.play()
     }
 });
 canvas.addEventListener("mousemove", function (e) {
