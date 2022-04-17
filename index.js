@@ -14,11 +14,11 @@ class Ball {
         this.score = 0;
     }
     draw() {
-        ctx.beginPath();
-        ctx.fillStyle = 'green';
-        ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.closePath();
+        // ctx.beginPath();
+        // ctx.fillStyle = 'green';
+        // ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
+        // ctx.fill();
+        // ctx.closePath();
         ctx.fillStyle = "white";
         ctx.font = 'Bold 20px sans-serif';
         this.score = Math.max(this.score, Math.floor(-this.offset / 10))
@@ -384,7 +384,7 @@ function animate() {
     ctx.fillStyle = "#1B0324";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     requestAnimationFrame(animate);
-    // ball.draw();
+    ball.draw();
     ball.move();
     sprite.draw()
     // console.log(ball)
