@@ -36,8 +36,8 @@ class Ball {
             this.offset = this.position.y - 3 * (canvas.height - 20) / 5
         }
         this.death();
-        // sprite.position.x = this.position.x - listSprites[Math.floor(sprite.index / 4)].width / 2
-        // sprite.position.y = this.position.y - listSprites[Math.floor(sprite.index / 4)].height + this.rad
+        sprite.position.x = this.position.x - listSprites[Math.floor(sprite.index / 4)].width / 2
+        sprite.position.y = this.position.y - listSprites[Math.floor(sprite.index / 4)].height + this.rad
         // this.collide()
     }
     animate() {
@@ -353,13 +353,13 @@ sparksList = [new Sparker(canvas.width / 2, canvas.height)]
 // ! TRIAL ENDS FOR SPARKS
 
 // ! TRIAL FOR NEW SPRITES STARTS
-// const listSprites = []
-// var nSprites = 8
-// for (let index = 0; index < nSprites; index++) {
-//     image = new Image()
-//     image.src = `./sprites/sprite${index + 1}.png`
-//     listSprites.push(image);
-// }
+const listSprites = []
+var nSprites = 8
+for (let index = 0; index < nSprites; index++) {
+    image = new Image()
+    image.src = `./sprites/sprite${index + 1}.png`
+    listSprites.push(image);
+}
 
 class Sprite {
     constructor() {
@@ -384,8 +384,9 @@ function animate() {
     ctx.fillStyle = "#1B0324";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     requestAnimationFrame(animate);
-    ball.draw();
+    // ball.draw();
     ball.move();
+    sprite.draw()
     // console.log(ball)
     line.drawlines(ball);
     if (!ball.death()) {
