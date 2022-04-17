@@ -16,11 +16,11 @@ Just click and play. If the ball hits the side - YOU LOSE! After each level, pla
 
 ## Screenshots
 
-![App Screenshot](https://raw.githubusercontent.com/probotsRR/lynez/main/screenshots/1.PNG?token=GHSAT0AAAAAABTNHEVLHYSEOZ6TU5JMIGXIYS4FA3Q)
+![App Screenshot](https://github.com/probotsRR/lynez/blob/main/screenshots/1.PNG)
 
-![App Screenshot](https://raw.githubusercontent.com/probotsRR/lynez/main/screenshots/2.PNG?token=GHSAT0AAAAAABTNHEVKQOMR3FTANTLVNQI4YS4FBVQ)
+![App Screenshot](https://github.com/probotsRR/lynez/blob/main/screenshots/2.PNG)
 
-![App Screenshot](https://raw.githubusercontent.com/probotsRR/lynez/main/screenshots/3.PNG?token=GHSAT0AAAAAABTNHEVK4BVVVO3UW2BMMSQYYS4FB5A)
+![App Screenshot](https://github.com/probotsRR/lynez/blob/main/screenshots/3.PNG)
 
 
 ## Authors
