@@ -17,10 +17,7 @@ function run()
         }
         else
         {
-            ctx.beginPath();
-            // console.log(circle[4])
-            // ctx.strokeStyle=circle[4];
-            // console.log(ctx.strokeStyle);    
+            ctx.beginPath();   
             ctx.arc(circle[0][0],circle[0][1]-offset, circle[1] ,0,Math.PI*2);
             ctx.stroke();
         }

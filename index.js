@@ -27,11 +27,6 @@ class Ball {
         this.score = 0;
     }
     draw() {
-        // ctx.beginPath();
-        // ctx.fillStyle = 'green';
-        // ctx.arc(this.position.x, this.position.y - this.offset, this.rad, 0, Math.PI * 2);
-        // ctx.fill();
-        // ctx.closePath();
         ctx.fillStyle = "white";
         ctx.font = 'Bold 20px sans-serif';
         this.score = Math.max(this.score, Math.floor(-this.offset / 10))
@@ -52,7 +47,6 @@ class Ball {
         this.death();
         sprite.position.x = this.position.x - listSprites[Math.floor(sprite.index / 4)].width / 2
         sprite.position.y = this.position.y - listSprites[Math.floor(sprite.index / 4)].height + this.rad
-        // this.collide()
     }
     animate() {
 
@@ -61,10 +55,6 @@ class Ball {
         if (this.position.y > canvas.height - this.rad) {
             this.vel.y -= 0.1;
             this.vel.y *= -1;
-            // console.log(this.vel);
-            // console.log(this.vel.y)  ;
-            // console.log("trial for collide  ")
-            // console.log(this.vel);
         }
     }
     death() {
@@ -82,19 +72,13 @@ class LineS {
         this.lines = [[this.points[0], this.points[1]]]
     }
     addPoint(x, y) {
-        // this.points.push({x:x,y:y,offset_y:0});
         this.addline(this.currentPoint, { x: x, y: y });
-        // console.log(x, y);
         this.currentPoint = { x: x, y: y };
         sparksList.push(new Sparker(this.currentPoint.x, this.currentPoint.y));
 
     }
     addline(point1, point2) {
-        console.log("LINE ADDED")
         this.lines.push([point1, point2])
-        // console.log(point1, point2)
-        // console.log(ball.offset);
-        // console.log(this.lines.length)
     }
     drawlines(ball) {
         this.lines.forEach(line => {
@@ -127,13 +111,8 @@ class LineS {
                     var m = (pos2.y - pos1.y) / (pos2.x - pos1.x);
                     m=Math.min(m,100);
                     ball.vel.x = m;
-                    // var n={x:m,y:-1}
-                    // n=this.unit(n)
-                    // ball.vel=this.sub(ball.vel,this.mult(2*this.dot(ball.vel,n),n))
                     ball.vel = this.unit(ball.vel);
                     ball.vel = this.mult(9, ball.vel)
-                    // var anglesp = Math.atan2(ball.vel.y, ball.vel.x);
-                    // sparkpos = [ball.position.x - 20 * Math.cos(anglesp), ball.position.y + 20 * Math.sin(anglesp)];
                     Bounce_sound.play()
                 }
                 
@@ -168,7 +147,6 @@ class LineS {
         ctx.beginPath();
         ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
-        // console.log(this.points[this.points.length-1]);
         ctx.moveTo(this.currentPoint.x, this.currentPoint.y - ball.offset);
         ctx.lineTo(x, y);
         ctx.stroke();
@@ -206,9 +184,6 @@ class shape {
         this.angles.forEach(angle => {
             this.points.push([this.center[0] + Math.sin(angle * Math.PI / 180) * size, this.center[1] + Math.cos(angle * Math.PI / 180) * size])
         });
-        // for (let index = 0; index < this.angles.length; index++) {
-        //     this.points.push([this.center[0]+Math.sin(angles[i]*Math.PI/180)*size,this.center[1]+Math.cos(angles[i]*Math.PI/180)*size])             
-        // }
         ctx.moveTo(this.points[0][0], this.points[0][1])
         this.points.slice(1,).forEach(point => {
             ctx.lineTo(point[0], point[1])
@@ -219,9 +194,6 @@ class shape {
         ctx.globalAlpha = 1;
         // this.size -= .1;
     }
-    // move()
-    // {
-    // }
     rotate() {
         for (let index = 0; index < this.angles.length; index++) {
             this.angles[index] += 1;
@@ -233,17 +205,14 @@ class shape {
 var sq = []
 function chooseRandomShapes() {
     var listShapesSize = [3, 4, 5, 6]
-    // var nShapes = Math.floor(Math.random() * 10 + 10)
     var nShapes = 4;
     for (let index = 0; index < nShapes; index++) {
         sq.push(new shape([Math.random() * canvas.width, -Math.floor(Math.random() * 2 * canvas.height / 3)], 40, listShapesSize[Math.floor(Math.random() * 4)]));
     }
 }
 function randomplatforms() {
-    // console.log("CALLED")
     t = Math.random() * canvas.height
     line.addline({ x: canvas.width * Math.random(), y: t - canvas.height + ball.offset }, { x: canvas.width * Math.random(), y: Math.random() * 100 + t - 50 - canvas.height + ball.offset })
-    // console.log(ball.offset)
 }
 setInterval(chooseRandomShapes, 5000);
 setInterval(randomplatforms, 7000);
@@ -251,11 +220,9 @@ function background() {
     sq.forEach(square => {
         square.draw();
     });
-    // console.log(sq.length)
     for (let i = 0; i < sq.length; i++) {
         if (sq[i].center[1] >= canvas.height) {
             sq = sq.slice(i + 1,)
-            // console.log("REMOVED", sq.length)
         }
     }
 }
@@ -298,7 +265,6 @@ class Spark {
         this.angle = Math.atan2(movement[1], movement[0])
     }
     //     # if you want to get more realistic, the speed should be adjusted here
-
     move(dt) {
         var movement = this.calculate_movement(dt)
         this.loc[0] += movement[0]
@@ -314,7 +280,6 @@ class Spark {
     //     #this.point_towards(Math.PI / 2, 0.02)
     //     #this.velocity_adjust(0.975, 0.2, 8, dt)
     //     #this.angle += 0.1
-
 
     draw(offset = [0, 0]) {
         var points = []
@@ -348,13 +313,10 @@ class Sparker {
         this.sparks.push(new Spark([POSX, POSY], Math.random() * 2 * Math.PI, Math.random() * 2 + 2, "#000", 1))
         this.sparks.sort()
         this.sparks.reverse()
-        // console.log(POSX,POSY);
         for (let i = 0; i < this.sparks.length; i++) {
             this.sparks[i].move(1)
             this.sparks[i].draw()
             if (!this.sparks[i].alive) {
-                // sparks.pop(i)
-                // sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*3+3,"#000",1))
             }
         }
         if (this.sparks.length > 10) {
@@ -362,9 +324,6 @@ class Sparker {
         }
     }
 }
-// for (let i = 0; i < 50;i++) {
-//     sparks.push(new Spark([POSX,POSY],Math.random()*2*Math.PI,Math.random()*3+3,"#000",2))
-// }
 sparksList = [new Sparker(canvas.width / 2, canvas.height)]
 // ! TRIAL ENDS FOR SPARKS
 
@@ -397,8 +356,6 @@ sprite = new Sprite();
 // ! TRIAL FOR DYING ANIMATION
 function run(circle_effects)
 {
-    // Math.sort(circle_effects)
-    // Math.reverse(circle_effects)
     ctx.strokeStyle="#be2864"
     for (let i = 0; i < circle_effects.length; i++) {
         circle=circle_effects[i]
@@ -412,17 +369,13 @@ function run(circle_effects)
         else
         {
             ctx.beginPath();
-            // console.log(circle[4])
-            // ctx.strokeStyle=circle[4];
-            // console.log(ctx.strokeStyle);    
             ctx.arc(circle[0][0],circle[0][1]-ball.offset, Math.abs(circle[1]) ,0,Math.PI*2);
             ctx.stroke();
         }
     }
     gameEnd = true
 }
-// circle_effects.push([(0,400), 500, [500, 0.15], [10, 0.2], "#be2864"])
-// circle_effects.push([(0,400), 500, [500, 0.05], [5, 0.04], "#be2864"])
+
 function getMousePosition(canvas, event) {
     let rect = canvas.getBoundingClientRect();
     let x = event.clientX - rect.left;
@@ -445,7 +398,6 @@ function animate() {
     ball.draw();
     ball.move();
     sprite.draw();
-    // console.log(ball)
     line.drawlines(ball);
     if (!ball.death()) {
         line.hoverline(a.x, a.y);
@@ -463,7 +415,6 @@ function animate() {
             ball.vel.y = -ball.vel.y
             screen_shake -= 1
         }
-        // console.log(screen_shake)
         sparksList.forEach(spark => {
             spark.draw();
     });
@@ -480,10 +431,8 @@ function animate() {
     }
     if(ball.death())
     {
-        console.log(circle_effects)
         run(circle_effects)
     }
-    // requestAnimationFrame(tick);
 }
 
 canvas.addEventListener("mousedown", function (e) {
