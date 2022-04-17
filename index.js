@@ -450,7 +450,6 @@ function animate() {
     // requestAnimationFrame(tick);
 }
 
-
 canvas.addEventListener("mousedown", function (e) {
     t = getMousePosition(canvas, e);
     if (!ball.death()) {
