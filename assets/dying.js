@@ -1,6 +1,6 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-circle_effects=[]
+var circle_effects=[]
 offset=0
 function run()
 {

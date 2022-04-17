@@ -20,7 +20,7 @@ try {
 // ! CONSTS FOR OUR BALL
 class Ball {
     constructor(x = canvas.width / 2, y = canvas.height - 20) {
-        this.position = { x: x, y: 3 * y / 5 }
+        this.position = { x: x, y: 3 * y / 5-20 }
         this.vel = { x: 0, y: 0 };
         this.rad = 20;
         this.offset = 0;
@@ -393,8 +393,50 @@ class Sprite {
 var flag = true
 sprite = new Sprite();
 // ! TRIAL FOR NEW SPRITES ENDS
+
+// ! TRIAL FOR DYING ANIMATION
+function run(circle_effects)
+{
+    // Math.sort(circle_effects)
+    // Math.reverse(circle_effects)
+    ctx.strokeStyle="#be2864"
+    for (let i = 0; i < circle_effects.length; i++) {
+        circle=circle_effects[i]
+        circle[1] += circle[3][0]
+        circle[2][0] -= circle[2][1]
+        circle[3][0] -= circle[3][1]
+        if(circle[2][0] < 1)
+        {
+            circle_effects.pop(i)
+        }
+        else
+        {
+            ctx.beginPath();
+            // console.log(circle[4])
+            // ctx.strokeStyle=circle[4];
+            // console.log(ctx.strokeStyle);    
+            ctx.arc(circle[0][0],circle[0][1]-ball.offset, Math.abs(circle[1]) ,0,Math.PI*2);
+            ctx.stroke();
+        }
+    }
+    gameEnd = true
+}
+// circle_effects.push([(0,400), 500, [500, 0.15], [10, 0.2], "#be2864"])
+// circle_effects.push([(0,400), 500, [500, 0.05], [5, 0.04], "#be2864"])
+function getMousePosition(canvas, event) {
+    let rect = canvas.getBoundingClientRect();
+    let x = event.clientX - rect.left;
+    let y = event.clientY - rect.top;
+    return { x: x, y: y };
+}
+canvas.addEventListener("mousedown", function (e) {
+});
+
+var circle_effects=[]
+// ! TRAIL FOR DYING ANMATION ENDS
 var shake = true
 var screen_shake = 0
+var gameEnd = false
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#1B0324";
@@ -402,7 +444,7 @@ function animate() {
     requestAnimationFrame(animate);
     ball.draw();
     ball.move();
-    sprite.draw()
+    sprite.draw();
     // console.log(ball)
     line.drawlines(ball);
     if (!ball.death()) {
@@ -419,15 +461,27 @@ function animate() {
         ball.offset += Math.random() * 20 - 10;
         if (ball.vel.y > 0)
             ball.vel.y = -ball.vel.y
-        screen_shake -= 1
-    }
-    // console.log(screen_shake)
-    sparksList.forEach(spark => {
-        spark.draw();
+            screen_shake -= 1
+        }
+        // console.log(screen_shake)
+        sparksList.forEach(spark => {
+            spark.draw();
     });
     background();
-    if (ball.death()) {
+    if (ball.death() && !gameEnd) {
         window.localStorage.setItem("highscore", HIGHSCORE);
+        ctx.lineWidth = 10;
+        ctx.strokeStyle="#be2864"
+        circle_effects.push([(ball.position.x,ball.position.y ), 500, [500, 0.15], [10, 0.2], "#be2864"])
+        circle_effects.push([(ball.position.x,ball.position.y ), 500, [500, 0.05], [5, 0.04], "#be2864"])
+        circle_effects.push([[ball.position.x,ball.position.y ], 50, [250, 0.2], [4, 0.3], "#000"])
+        circle_effects.push([[ball.position.x,ball.position.y ], 100, [250, 0.2], [4, 0.3], "#000"])
+        circle_effects.push([[ball.position.x,ball.position.y ], 250, [250, 0.2], [4, 0.3], "#000"])
+    }
+    if(ball.death())
+    {
+        console.log(circle_effects)
+        run(circle_effects)
     }
     // requestAnimationFrame(tick);
 }
