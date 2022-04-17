@@ -457,6 +457,6 @@ canvas.addEventListener("mousedown", function (e) {
     }
 });
 canvas.addEventListener("mousemove", function (e) {
-    a = getMousePosition(canvas, e);;
+    a = getMousePosition(canvas, e);
 });
 animate();
